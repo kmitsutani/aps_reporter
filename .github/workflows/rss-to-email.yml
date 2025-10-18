@@ -1,0 +1,56 @@
+name: RSS to Email
+
+on:
+  schedule:
+    # Run daily at 5:00 AM UTC (equivalent to original cron: 0 5 * * *)
+    - cron: '0 5 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  process-rss:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Generate filtered RSS feed
+        run: |
+          python scripts/papers_iefl.py filtered.xml
+
+      - name: Check RSS duration
+        run: |
+          python scripts/rss_duration.py --log-level INFO
+
+      - name: Send RSS feed via email
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          python scripts/send_rss_email.py \
+            --rss-file filtered.xml \
+            --to "$GMAIL_ADDRESS" \
+            --smtp-host smtp.gmail.com \
+            --smtp-port 587 \
+            --smtp-user "$GMAIL_ADDRESS" \
+            --smtp-password "$GMAIL_APP_PASSWORD" \
+            --from "$GMAIL_ADDRESS" \
+            --days-back 1
+
+      - name: Upload filtered RSS as artifact (optional)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: filtered-rss-feed
+          path: filtered.xml
+          retention-days: 7
