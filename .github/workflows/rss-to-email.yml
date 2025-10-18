@@ -32,25 +32,18 @@ jobs:
         run: |
           python scripts/rss_duration.py --log-level INFO
 
-      - name: Send RSS feed via email
+      - name: Send filtered RSS feed via email
         env:
-          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: |
           python scripts/send_rss_email.py \
             --rss-file filtered.xml \
-            --to "$GMAIL_ADDRESS" \
+            --to "$RECIPIENT_EMAIL" \
             --smtp-host smtp.gmail.com \
             --smtp-port 587 \
-            --smtp-user "$GMAIL_ADDRESS" \
+            --smtp-user "$SENDER_EMAIL" \
             --smtp-password "$GMAIL_APP_PASSWORD" \
-            --from "$GMAIL_ADDRESS" \
+            --from "$SENDER_EMAIL" \
             --days-back 1
-
-      - name: Upload filtered RSS as artifact (optional)
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: filtered-rss-feed
-          path: filtered.xml
-          retention-days: 7

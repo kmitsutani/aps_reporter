@@ -1,0 +1,25 @@
+# Backup directory - exclude from Git
+ubuntu_ghost_home/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Generated RSS files
+*.rss
+*.xml
+
+# Logs
+*.log
+
+# Environment variables
+.env
