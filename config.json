@@ -1,0 +1,23 @@
+{
+  "feeds":{
+    "online":{
+      "PRA-ES":"https://feeds.aps.org/rss/prasuggestions.xml",
+      "PRD-ES":"https://feeds.aps.org/rss/prdsuggestions.xml",
+      "PRL-ES":"https://feeds.aps.org/rss/prlsuggestions.xml",
+      "PRXQ":"https://feeds.aps.org/rss/recent/prxquantum.xml"
+    },
+    "local":
+      {"iefl": "python::scripts/papers_iefl.py"}
+  },
+  "style": {
+    "by-entry": [
+      "PRA-ES",
+      "PRD-ES",
+      "PRL-ES",
+      "PRXQ"
+    ],
+    "Summary":[
+      "iefl"
+    ]
+  }
+}

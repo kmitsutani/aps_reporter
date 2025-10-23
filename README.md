@@ -4,12 +4,53 @@
 
 ## セットアップ
 
-### 1. Gmailアプリパスワードの生成
+### `config.json` の編集
+
+`config.json`によってどのようなフィードを取得するのか，どのようなスタイルで配信するのかを設定します．
+
+以下に設定例の一例を挙げます．
+```json
+{
+  "feeds":{
+    "online":{
+      "PRA-ES":"https://feeds.aps.org/rss/prasuggestions.xml",
+      "PRD-ES":"https://feeds.aps.org/rss/prdsuggestions.xml",
+      "PRL-ES":"https://feeds.aps.org/rss/prlsuggestions.xml",
+      "PRXQ":"https://feeds.aps.org/rss/recent/prxquantum.xml"
+    },
+    "local":
+      {"iefl": "python::scripts/filter_iefl.py"}
+  },
+  "style": {
+    "by-entry": [
+      "RPA-ES",
+      "PRD-ES",
+      "PRL-ES",
+      "PRXQ"
+    ],
+    "Summary":[
+      "iefl"
+    ]
+  }
+}
+```
+
+`feeds`セクションにおいては取得フィードの設定を行います．
+`feeds.online` はオンラインにあるRSSファイルのURLを表す辞書になっています
+辞書の各キーはそのフィードの名前を表し各値はURLを表します．
+`feeds.local`のほうはrss互換のxmlファイルを生成するローカルスクリプトの名前と場所を表す辞書になっています．
+
+`style`セクションは各フィードをどのように配信するかを表しています．
+`style.by-entry` に含まれるフィードに関しては entry(item)につきメール一通になるような区切りで通知します．
+`style.Summary` に含まれるフィードに関しては一日に一通サマリーを送信します．
+
+
+### Gmailアプリパスワードの生成
 
 1. Googleアカウントで2段階認証を有効化
 2. https://myaccount.google.com/apppasswords でアプリパスワードを生成
 
-### 2. GitHub Repository Secretsの設定
+### GitHub Repository Secretsの設定
 
 リポジトリの **Settings > Secrets and variables > Actions > New repository secret** で以下を設定：
 

@@ -24,26 +24,16 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Generate filtered RSS feed
-        run: |
-          python scripts/papers_iefl.py filtered.xml
-
       - name: Check RSS duration
         run: |
           python scripts/rss_duration.py --log-level INFO
 
-      - name: Send filtered RSS feed via email
+      - name: Process feeds and send emails
         env:
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          SMTP_HOST: smtp.gmail.com
+          SMTP_PORT: 587
         run: |
-          python scripts/send_rss_email.py \
-            --rss-file filtered.xml \
-            --to "$RECIPIENT_EMAIL" \
-            --smtp-host smtp.gmail.com \
-            --smtp-port 587 \
-            --smtp-user "$SENDER_EMAIL" \
-            --smtp-password "$GMAIL_APP_PASSWORD" \
-            --from "$SENDER_EMAIL" \
-            --days-back 1
+          python process_feeds.py
